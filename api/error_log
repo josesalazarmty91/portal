@@ -1,0 +1,15 @@
+[16-Oct-2025 14:56:38 America/Monterrey] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'foto_url' in 'SELECT' in /home/grupoam6/public_html/amalgamago/api/auth_handler.php:184
+Stack trace:
+#0 /home/grupoam6/public_html/amalgamago/api/auth_handler.php(184): mysqli->prepare()
+#1 {main}
+  thrown in /home/grupoam6/public_html/amalgamago/api/auth_handler.php on line 184
+[16-Oct-2025 14:56:45 America/Monterrey] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'foto_url' in 'SELECT' in /home/grupoam6/public_html/amalgamago/api/auth_handler.php:184
+Stack trace:
+#0 /home/grupoam6/public_html/amalgamago/api/auth_handler.php(184): mysqli->prepare()
+#1 {main}
+  thrown in /home/grupoam6/public_html/amalgamago/api/auth_handler.php on line 184
+[16-Oct-2025 14:56:55 America/Monterrey] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'foto_url' in 'SELECT' in /home/grupoam6/public_html/amalgamago/api/auth_handler.php:184
+Stack trace:
+#0 /home/grupoam6/public_html/amalgamago/api/auth_handler.php(184): mysqli->prepare()
+#1 {main}
+  thrown in /home/grupoam6/public_html/amalgamago/api/auth_handler.php on line 184

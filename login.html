@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Grupo Amalgama</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="h-full bg-gray-50 flex items-center justify-center">
+    <div class="max-w-md w-full p-8 space-y-8 bg-white rounded-xl shadow-2xl border-t-4 border-[#f5851f] animate-fade-in-up">
+        <div class="text-center">
+            <!-- Logo de Amalgama -->
+            <img class="mx-auto h-10 w-auto" src="https://grupoamalgama.com.mx/imagen/logo.png" alt="Logo Grupo Amalgama">
+            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                Plataforma Interna
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Inicia sesión para acceder a tu espacio de trabajo.
+            </p>
+        </div>
+        <form id="login-form" class="mt-8 space-y-6">
+            <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error:</strong>
+                <span id="error-text" class="block sm:inline"></span>
+            </div>
+            
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="email-address" class="sr-only">Correo Electrónico</label>
+                    <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-[#0b4d9a] focus:border-[#0b4d9a] focus:z-10 sm:text-sm" placeholder="Correo Electrónico">
+                </div>
+                <div>
+                    <label for="password" class="sr-only">Contraseña</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-[#0b4d9a] focus:border-[#0b4d9a] focus:z-10 sm:text-sm" placeholder="Contraseña">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" id="login-button" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#0b4d9a] hover:bg-[#083a75] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b4d9a] transition-colors">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-indigo-50 group-hover:text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1zm3.5 3.5a3.5 3.5 0 1 1-7 0V9h7V4.5z" clip-rule="evenodd" /></svg>
+                    </span>
+                    Iniciar Sesión
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'api/';
+        const form = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const loginButton = document.getElementById('login-button');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.classList.add('hidden');
+            loginButton.disabled = true;
+            loginButton.innerText = 'Iniciando...';
+
+            const email = document.getElementById('email-address').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}auth_handler.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'login', email: email, password: password })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Si el login es exitoso, redirigimos al dashboard (index.html)
+                    window.location.href = 'index.html#dashboard';
+                } else {
+                    // Mostrar error
+                    errorText.innerText = result.message || 'Error desconocido al iniciar sesión.';
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorText.innerText = 'Error de conexión con el servidor.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                loginButton.disabled = false;
+                loginButton.innerText = 'Iniciar Sesión';
+            }
+        });
+    </script>
+</body>
+</html>
