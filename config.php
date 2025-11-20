@@ -18,3 +18,7 @@ define('DB_PASS', 'Cortometraje@3');
 define('DB_NAME', 'grupoam6_amalgamago');
 
 
+// ... código existente ...
+
+// Google Client ID (Pégalo aquí abajo)
+define("882838553794-j2l1cr4suijlg05nb3ickj890qnm03ci.apps.googleusercontent.com",'882838553794-j2l1cr4suijlg05nb3ickj890qnm03ci.apps.googleusercontent.com');

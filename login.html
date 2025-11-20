@@ -6,6 +6,7 @@
     <title>Iniciar Sesión | Grupo Amalgama</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
     </style>
@@ -13,7 +14,6 @@
 <body class="h-full bg-gray-50 flex items-center justify-center">
     <div class="max-w-md w-full p-8 space-y-8 bg-white rounded-xl shadow-2xl border-t-4 border-[#f5851f] animate-fade-in-up">
         <div class="text-center">
-            <!-- Logo de Amalgama -->
             <img class="mx-auto h-10 w-auto" src="https://grupoamalgama.com.mx/imagen/logo.png" alt="Logo Grupo Amalgama">
             <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
                 Plataforma Interna
@@ -22,12 +22,41 @@
                 Inicia sesión para acceder a tu espacio de trabajo.
             </p>
         </div>
+
         <form id="login-form" class="mt-8 space-y-6">
             <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                 <strong class="font-bold">Error:</strong>
                 <span id="error-text" class="block sm:inline"></span>
             </div>
             
+            <div class="mb-6">
+                <div id="g_id_onload"
+                     data-client_id="882838553794-j2l1cr4suijlg05nb3ickj890qnm03ci.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="sign_in_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     data-width="100%">
+                </div>
+                
+                <div class="relative mt-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">O ingresa manualmente</span>
+                    </div>
+                </div>
+            </div>
             <div class="rounded-md shadow-sm -space-y-px">
                 <div>
                     <label for="email-address" class="sr-only">Correo Electrónico</label>
@@ -57,6 +86,7 @@
         const errorText = document.getElementById('error-text');
         const loginButton = document.getElementById('login-button');
 
+        // Lógica para Login Manual
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorMessage.classList.add('hidden');
@@ -76,10 +106,8 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    // Si el login es exitoso, redirigimos al dashboard (index.html)
                     window.location.href = 'index.html#dashboard';
                 } else {
-                    // Mostrar error
                     errorText.innerText = result.message || 'Error desconocido al iniciar sesión.';
                     errorMessage.classList.remove('hidden');
                 }
@@ -91,6 +119,39 @@
                 loginButton.innerText = 'Iniciar Sesión';
             }
         });
+
+        // Lógica para Login con Google (Callback)
+        async function handleCredentialResponse(response) {
+            // Limpiar errores previos
+            errorMessage.classList.add('hidden');
+            
+            try {
+                // Enviamos el token (JWT) a nuestro backend
+                const apiResponse = await fetch(`${API_BASE_URL}auth_handler.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'google_login', 
+                        token: response.credential 
+                    })
+                });
+
+                const result = await apiResponse.json();
+
+                if (result.status === 'success') {
+                    // Redirigir al dashboard si todo salió bien
+                    window.location.href = 'index.html#dashboard';
+                } else {
+                    // Mostrar error si el backend rechaza el token (ej: dominio incorrecto)
+                    errorText.innerText = result.message;
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error(error);
+                errorText.innerText = 'Error de conexión al validar con Google.';
+                errorMessage.classList.remove('hidden');
+            }
+        }
     </script>
 </body>
 </html>
